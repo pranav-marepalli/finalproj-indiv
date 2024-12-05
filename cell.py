@@ -5,6 +5,7 @@ from sudoku_generator import*
 
 BLACK = ( 0, 0, 0)
 WHITE = (255, 255, 255)
+RED=(255, 0, 0)
 
 
 
@@ -21,6 +22,7 @@ class Cell:
         self.screen=screen
         self.cell_width=width
         self.cell_height=height
+        self.selected=False
         
         
 
@@ -43,6 +45,7 @@ class Cell:
         position=[(self.col*width//9), (self.row*length//9)]
         textRect.center=((position[0]+width//9)//2, (position[1]+length//9)//2)
         self.screen.blit(text, textRect)
+
         if self.selected:
             pygame.draw.rect(self.screen, (255, 0, 0), textRect, 3)  # Red border
 
