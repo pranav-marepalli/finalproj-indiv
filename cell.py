@@ -9,10 +9,11 @@ RED=(255, 0, 0)
 
 
 
-font = pygame.font.Font(pygame.font.match_font("comicsansms"), 36)
+
 
 pygame.init()
-cell_surface=pygame.display.set_mode(())
+font = pygame.font.Font(None, 36)
+cell_surface=pygame.display.set_mode((640,512))
 class Cell:
     def __init__(self, value, row, col, screen, width, height):
         self.value=value
@@ -24,7 +25,7 @@ class Cell:
         self.cell_height=height
         self.selected=False
         
-        
+       
 
 
     def set_cell_value(self, value):

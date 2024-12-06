@@ -9,21 +9,21 @@ class Board:
         self.screen = screen
         self.difficulty = difficulty
         self.selected = None
-        self.og_board = None
+        self.og_board = generate_sudoku(difficulty)  # Initialize the original board
         self.cells = []  # This will store all Cell objects
-        
+
         # Initialize the cells grid (9x9)
         for r in range(9):
             row = []
             for c in range(9):
-                # Assuming 0 is the initial value for all cells (adjust based on your logic)
-                row.append(Cell(value=0, row=r, col=c, screen=self.screen))  
+                value = self.og_board[r][c]  # Get the value from the generated board
+                row.append(Cell(value=value, row=r, col=c, screen=self.screen))
             self.cells.append(row)
 
     def draw(self):
         # Draw all cells
-        for r in range(len(self.cells)):
-            for c in range(len(self.cells[r])):
+        for r in range(9):
+            for c in range(9):
                 self.cells[r][c].draw()
 
         # Draw the grid lines
@@ -90,7 +90,13 @@ class Board:
 
     def update_board(self):
         # Update the underlying board based on current cell values
-        self.board = [[self.cells[r][c].value for c in range(9)] for r in range(9)]
+        updated_board = []
+        for r in range(9):
+            row = []
+            for c in range(9):
+                row.append(self.cells[r][c].value)
+            updated_board.append(row)
+        self.board = updated_board
 
     def find_empty(self):
         # Find an empty cell and return its row and column
@@ -100,42 +106,43 @@ class Board:
                     return r, c
         return None
 
-    def unique(self, values):
+    def check_board(self):
+        # Check rows
+        for row in range(9):
+            row_values = []
+            for col in range(9):
+                row_values.append(self.cells[row][col].value)
+            if not self.is_unique(row_values):
+                return False
+
+        # Check columns
+        for col in range(9):
+            col_values = []
+            for row in range(9):
+                col_values.append(self.cells[row][col].value)
+            if not self.is_unique(col_values):
+                return False
+
+        # Check 3x3 subgrids
+        for box_row in range(3):
+            for box_col in range(3):
+                grid_values = []
+                for row in range(box_row * 3, box_row * 3 + 3):
+                    for col in range(box_col * 3, box_col * 3 + 3):
+                        grid_values.append(self.cells[row][col].value)
+                if not self.is_unique(grid_values):
+                    return False
+
+        return True
+
+    def is_solved(self):
+        # Check if the board is completely filled and valid
+        return self.is_full() and self.check_board()
+
+    def is_unique(self, values):
+        # Helper function to check if a list of values contains unique numbers (ignoring zeros)
         nums = []
         for value in values:
             if value != 0:
                 nums.append(value)
         return len(nums) == len(set(nums))
-    
-
-    def check_board(self):
-        for row in range(9):
-            values = []
-            for col in range(9):
-                value = self.cells[row][col].value
-                values.append(value)
-        if not self.unique(values):
-            return False
-
-        for col in range(9):
-            values = []
-            for row in range(9):
-                value = value = self.cells[row][col].value
-                values.append(value)
-            if not self.unique(values):
-                return False
-
-        for row in range(9):
-         for col in range(9):
-            values = []
-            for r1 in range(row * 3, row * 3 + 3):
-                for c1 in range(col * 3, col * 3 + 3):
-                    value = self.cells[r1][c1].value
-                    values.append(value)
-            if not self.unique(values):
-                return False
-            
-        return True
-
-
-
